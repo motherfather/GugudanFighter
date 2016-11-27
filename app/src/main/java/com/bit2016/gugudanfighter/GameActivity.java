@@ -16,7 +16,6 @@ import java.util.TimerTask;
 public class GameActivity extends AppCompatActivity {
     private static final int LIMIT = 5;
     private Timer timer = new Timer();
-    private static int seconds = 0;
     private TextView tvLastTime;
 
     // 답
@@ -25,21 +24,34 @@ public class GameActivity extends AppCompatActivity {
 
     private static Set<Multiplication> set;
 
-    private static int TOTAL = 0;
-    private static int CORR = 0;
+    private static int TOTAL;
+    private static int CORR;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-        tvLastTime = (TextView)findViewById(R.id.textView_sec); // 타이머 나타내는 것 선언
-        timer.schedule(new GameTimerTask(), 0, 1000); // 타이머 발동
-        createQ();
+        // 타이머 표시와 설정
+        tvLastTime = (TextView)findViewById(R.id.textView_sec);
+        timer.schedule(new GameTimerTask(), 0, 1000);
+
+        // 게임 시작
+        startGame();
     }
 
-    private void createQ() {
-        SelectNumber();
+    // 뒤로가기 누를 때 타이머 끄고 액티비티 끄기
+    @Override
+    public void onBackPressed() {
+        timer.cancel();
+        // 매번 값을 따로 초기화 하지 않고 하는 법
+        TOTAL = 0;
+        CORR = 0;
+        finish();
+    }
+
+    private void startGame() {
+        selectNumber();
         ((TextView)findViewById(R.id.textView_pre)).setText("" + LEFT_ANSWER);
         ((TextView)findViewById(R.id.textView_post)).setText("" + RIGHT_ANSWER);
 
@@ -49,25 +61,29 @@ public class GameActivity extends AppCompatActivity {
         int[] button_id = {R.id.button1, R.id.button2, R.id.button3, R.id.button4, R.id.button5, R.id.button6, R.id.button7, R.id.button8, R.id.button9};
         int index = 0;
         for (Multiplication mul : set) {
-            ((TextView)findViewById(button_id[index])).setText("" + (mul.left * mul.right));
-            if (((TextView)findViewById(button_id[index])).getText() == String.valueOf(LEFT_ANSWER * RIGHT_ANSWER)) {
-                ((TextView)findViewById(button_id[index])).setOnClickListener(new View.OnClickListener() {
+            TextView textButton = ((TextView)findViewById(button_id[index]));
+            textButton.setText("" + (mul.left * mul.right));
+            if ((textButton.getText()).equals(String.valueOf(LEFT_ANSWER * RIGHT_ANSWER))) {
+                textButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         CORR++;
                         TOTAL++;
+                        startGame();
                     }
                 });
             } else {
-                ((TextView)findViewById(button_id[index])).setOnClickListener(new View.OnClickListener() {
+                textButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         TOTAL++;
+                        startGame();
                     }
                 });
             }
             index++;
         }
+
     }
 
     // 랜덤수 생성에 사용
@@ -76,7 +92,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     // 8개의 오답과 1개의 정답 생성
-    private static void SelectNumber() {
+    private static void selectNumber() {
         // 보기를 중복없이 넣기 위해서 hashset 사용
         set = new HashSet<Multiplication>();
         while (set.size() != 9) { // 보기 9개 선택
@@ -140,13 +156,18 @@ public class GameActivity extends AppCompatActivity {
 
     // 타이머
     private class GameTimerTask extends TimerTask {
+        private int seconds = 0;
         @Override
         public void run() {
             seconds++;
             if (seconds >= LIMIT) {
                 timer.cancel();
-                Intent intent = new Intent(GameActivity.this, MainActivity.class);
+                Intent intent = new Intent(GameActivity.this, ResultActivity.class);
+                intent.putExtra("total", TOTAL);
+                intent.putExtra("corr", CORR);
                 startActivity(intent);
+                TOTAL = 0;
+                CORR = 0;
                 finish();
             }
             runOnUiThread(new Runnable() {

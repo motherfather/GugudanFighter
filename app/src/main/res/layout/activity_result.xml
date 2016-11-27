@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="133dp"
+        android:layout_marginTop="100dp"
         android:text="계속하시겠습니까?" />
 
     <Button
@@ -37,4 +37,14 @@
         android:layout_alignStart="@+id/textView4"
         android:layout_marginStart="70dp"
         android:text="YES" />
+
+    <TextView
+        android:text="88/88"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:id="@+id/textView_score"
+        android:layout_marginBottom="25dp"
+        android:layout_above="@+id/button_no"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>
