@@ -14,7 +14,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class GameActivity extends AppCompatActivity {
-    private static final int LIMIT = 5; // 제한 시간 설정
+    private static final int LIMIT = 20; // 제한 시간 설정
     private Timer timer = new Timer(); // 타이머 선언
     private TextView tvLastTime; // 타이머 출력 선언
 
@@ -156,7 +156,7 @@ public class GameActivity extends AppCompatActivity {
         // 해시코드 생성
         @Override
         public int hashCode() {
-            return 31 * left + right; // 3*9, 3*9 동일한 값이 여러번 들어오는 것을 막기 위해서...
+            return 31 * left * right; // 3*9, 3*9 동일한 값이 여러번 들어오는 것을 막기 위해서...
         }
     }
 
