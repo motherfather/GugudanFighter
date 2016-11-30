@@ -14,7 +14,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class GameActivity extends AppCompatActivity {
-    private static final int LIMIT = 20; // 제한 시간 설정
+    private static final int LIMIT = 5; // 제한 시간 설정
     private Timer timer = new Timer(); // 타이머 선언
     private TextView tvLastTime; // 타이머 출력 선언
 
@@ -31,7 +31,9 @@ public class GameActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-
+        // 정답수/문제수 초기화
+        TOTAL = 0;
+        CORR = 0;
         // 타이머 표시와 설정
         tvLastTime = (TextView)findViewById(R.id.textView_sec);
         timer.schedule(new GameTimerTask(), 0, 1000); // 0초부터 1초마다 시간 감소를 나타내기 위해서
@@ -44,9 +46,6 @@ public class GameActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         timer.cancel();
-        // 매번 값을 따로 초기화 하지 않고 하는 법
-        TOTAL = 0; // 초기화를 안하면 뒤로가기해도 이전 문제 풀 때 있는 카운터가 넣어와서 초기화를 해줘야함
-        CORR = 0;
         finish();
     }
 
@@ -177,8 +176,6 @@ public class GameActivity extends AppCompatActivity {
                 intent.putExtra("total", TOTAL); // 문제수와
                 intent.putExtra("corr", CORR); // 정답수를 ResultActivity로 넘기기 위해서 intent에 값을 담는 과정
                 startActivity(intent);
-                TOTAL = 0; // 다음 게임을 위한 초기화 과정
-                CORR = 0;
                 finish();
             }
             runOnUiThread(new Runnable() {
